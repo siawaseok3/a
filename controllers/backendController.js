@@ -146,5 +146,6 @@ module.exports = {
   getApis,
   handleDataRequest,
   handleRefreshRequest,
-  handleApiVideoRequest
+  handleApiVideoRequest,
+  ggvideo
 };
