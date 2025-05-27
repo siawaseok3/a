@@ -52,7 +52,7 @@ app.get('/ll/:id', async (req, res) => {
   const videoId = req.params.id;
 
     try {
-        const response = await axios.get(`https://watawatawata.glitch.me/api/${videoId}?token=wakameoishi`);
+        const response = await axios.get(`/api/${videoId}?token=wakameoishi`);
         const videoData = response.data;
 
         res.render('listen', { videoData, videoId });

@@ -38,8 +38,8 @@ async function handleVideoRequest(req, res) {
     '1': 'https://lavender-nasal-magic.glitch.me',
     '2': 'https://panoramic-power-repair.glitch.me',
     '3': 'https://distinct-coherent-utahraptor.glitch.me',
-    '4': 'https://quartz-scarce-quarter.glitch.me',
-    '5': 'https://pointy-outgoing-basket.glitch.me',
+    '4': '',
+    '5': '',
   };
 
   console.log(`[INFO] Incoming request for videoId=${videoId}, server=${server}`);
