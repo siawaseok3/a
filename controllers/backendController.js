@@ -110,31 +110,37 @@ const handleApiVideoRequest = async (req, res) => {
     }
 
     // 新形式
-    return res.json({
-      title: videoInfo.title,
-      viewCount: videoInfo.viewCount,
-      viewCountText: formatCount(videoInfo.viewCount) + '回',
-      likeCount: videoInfo.likeCount,
-      likeCountText: formatCount(videoInfo.likeCount),
-      description: videoInfo.descriptionHtml,
-      videoId: videoInfo.videoId,
-      channelName: videoInfo.author,
-      channelId: videoInfo.authorId,
-      channelThumbnails: videoInfo.authorThumbnails?.find(t => t.width === 176)?.url || null,
-      videoStreamUrl: videoInfo.formatStreams?.[0]?.url || null,
-      duration: formatDuration(videoInfo.lengthSeconds),
-      recommendedVideos: videoInfo.recommendedVideos?.map(v => ({
-        videoId: v.videoId,
-        title: v.title,
-        viewCount: v.viewCount,
-        viewCountText: formatCount(v.viewCount) + '回',
-        publishedText: v.publishedText,
-        author: v.author,
-        authorId: v.authorId,
-        thumbnailUrl: `https://img.youtube.com/vi/${v.videoId}/default.jpg`,
-        duration: formatDuration(v.lengthSeconds)
-      })) || []
-    });
+const responseJson = {
+  title: videoInfo.title,
+  viewCount: videoInfo.viewCount,
+  viewCountText: formatCount(videoInfo.viewCount) + '回',
+  likeCount: videoInfo.likeCount,
+  likeCountText: formatCount(videoInfo.likeCount),
+  description: videoInfo.descriptionHtml,
+  videoId: videoInfo.videoId,
+  channelName: videoInfo.author,
+  channelId: videoInfo.authorId,
+  channelThumbnails: videoInfo.authorThumbnails?.find(t => t.width === 176)?.url || null,
+  videoStreamUrl: videoInfo.formatStreams?.[0]?.url || null,
+  duration: formatDuration(videoInfo.lengthSeconds),
+  recommendedVideos: videoInfo.recommendedVideos?.map(v => ({
+    videoId: v.videoId,
+    title: v.title,
+    viewCount: v.viewCount,
+    viewCountText: formatCount(v.viewCount) + '回',
+    publishedText: v.publishedText,
+    author: v.author,
+    authorId: v.authorId,
+    thumbnailUrl: `https://img.youtube.com/vi/${v.videoId}/default.jpg`,
+    duration: formatDuration(v.lengthSeconds)
+  })) || []
+};
+
+// 📦 ログ出力を追加
+console.log('📤 新形式レスポンス:', JSON.stringify(responseJson, null, 2));
+
+return res.json(responseJson);
+
 
   } catch (error) {
     console.error(`動画取得失敗: ${error.message}`);
