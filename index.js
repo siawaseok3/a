@@ -29,9 +29,12 @@ app.use(cookieParser());
 app.use(express.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(cors());
-const routes = require("./routes");
-app.use("/", routes);
 
+//ルーティング
+const routes = require("./routes");
+const backendRoutes = require('./backendRoutes.js'); 
+app.use("/", routes);
+app.use('/', backendRoutes);
 
 
 const fetch = require('node-fetch');  // Assuming node-fetch is being used
