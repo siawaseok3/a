@@ -44,23 +44,6 @@ function logError(message, errorDetails) {
 
 
 
-//高画質再生！！
-app.get('/www/:id', async (req, res) => {
-  const videoId = req.params.id;
-    try {
-        const response = await axios.get(`https://watawatawata.glitch.me/api/${videoId}?token=wakameoishi`);
-        const videoData = response.data;
-
-        res.render('highquo', { videoData, videoId });
-  } catch (error) {
-        res.status(500).render('matte', { 
-      videoId, 
-      error: '動画を取得できません', 
-      details: error.message 
-    });
-  }
-});
-
 //音だけ再生
 app.get('/ll/:id', async (req, res) => {
   const videoId = req.params.id;
