@@ -1,8 +1,13 @@
-// routes/backendRoutes.js
 const express = require('express');
 const router = express.Router();
-const { handleApiVideoRequest } = require('../controllers/backendController');
+const {
+  handleDataRequest,
+  handleRefreshRequest,
+  handleApiVideoRequest
+} = require('./controllers/backendController.js');
 
-router.get('/api/:id', handleApiVideoRequest);
+router.get('/data', handleDataRequest);
+router.get('/refresh', handleRefreshRequest);
+router.get(['/api/:id', '/api/login/:id'], handleApiVideoRequest);
 
 module.exports = router;

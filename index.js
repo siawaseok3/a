@@ -32,9 +32,9 @@ app.use(cors());
 
 //ルーティング
 const routes = require("./routes");
-const backendRoutes = require('./backendRoutes.js'); 
+const backendRoutes = require('./backendRoutes'); 
 app.use("/", routes);
-app.use('/', backendRoutes);
+app.use("/", backendRoutes);
 
 
 const fetch = require('node-fetch');  // Assuming node-fetch is being used
