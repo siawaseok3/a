@@ -5,7 +5,7 @@ const axios = require('axios');
 // 元のfetchVideoData関数をそのまま使う
 const fetchVideoData = async (videoId, baseUrl) => {
   try {
-    const { data } = await axios.get(`${baseUrl}/api/${videoId}`);
+    const { data } = await axios.get(`/api/${videoId}`);
     return data;
   } catch (error) {
     throw new Error(error.message);
