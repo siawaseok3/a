@@ -64,7 +64,6 @@ const formatDuration = seconds => {
 
 const handleApiVideoRequest = async (req, res) => {
   const videoId = req.params.id;
-  const isLegacyFormat = req.query.format === 'legacy';
 
   try {
     const videoInfo = await ggvideo(videoId);
@@ -72,75 +71,36 @@ const handleApiVideoRequest = async (req, res) => {
       return res.status(404).json({ error: '動画情報が見つかりません' });
     }
 
-    if (isLegacyFormat) {
-      const formatStreams = videoInfo.formatStreams || [];
-      const streamUrl = formatStreams.reverse().map(stream => stream.url)[0];
+    const responseJson = {
+      title: videoInfo.title,
+      viewCount: videoInfo.viewCount,
+      viewCountText: formatCount(videoInfo.viewCount) + '回',
+      likeCount: videoInfo.likeCount,
+      likeCountText: formatCount(videoInfo.likeCount),
+      description: videoInfo.descriptionHtml,
+      videoId: videoInfo.videoId,
+      channelName: videoInfo.author,
+      channelId: videoInfo.authorId,
+      channelThumbnails: videoInfo.authorThumbnails?.find(t => t.width === 176)?.url || null,
+      videoStreamUrl: videoInfo.formatStreams?.[0]?.url || null,
+      duration: formatDuration(videoInfo.lengthSeconds),
+      recommendedVideos: videoInfo.recommendedVideos?.map(v => ({
+        videoId: v.videoId,
+        title: v.title,
+        viewCount: v.viewCount,
+        viewCountText: formatCount(v.viewCount) + '回',
+        publishedText: v.publishedText,
+        author: v.author,
+        authorId: v.authorId,
+        thumbnailUrl: `https://img.youtube.com/vi/${v.videoId}/default.jpg`,
+        duration: formatDuration(v.lengthSeconds)
+      })) || []
+    };
 
-      const audioStreams = videoInfo.adaptiveFormats || [];
+    // 📦 ログ出力を追加
+    console.log('📤 新形式レスポンス:', JSON.stringify(responseJson, null, 2));
 
-      const highstreamUrl = audioStreams
-        .filter(stream => stream.container === 'webm' && stream.resolution === '1080p')
-        .map(stream => stream.url)[0];
-
-      const audioUrl = audioStreams
-        .filter(stream => stream.container === 'm4a' && stream.audioQuality === 'AUDIO_QUALITY_MEDIUM')
-        .map(stream => stream.url)[0];
-
-      const streamUrls = audioStreams
-        .filter(stream => stream.container === 'webm' && stream.resolution)
-        .map(stream => ({
-          url: stream.url,
-          resolution: stream.resolution,
-        }));
-
-      return res.json({
-        stream_url: streamUrl,
-        highstreamUrl,
-        audioUrl,
-        videoId,
-        channelId: videoInfo.authorId,
-        channelName: videoInfo.author,
-        channelImage: videoInfo.authorThumbnails?.slice(-1)[0]?.url || '',
-        videoTitle: videoInfo.title,
-        videoDes: videoInfo.descriptionHtml,
-        videoViews: videoInfo.viewCount,
-        likeCount: videoInfo.likeCount,
-        streamUrls
-      });
-    }
-
-    // 新形式
-const responseJson = {
-  title: videoInfo.title,
-  viewCount: videoInfo.viewCount,
-  viewCountText: formatCount(videoInfo.viewCount) + '回',
-  likeCount: videoInfo.likeCount,
-  likeCountText: formatCount(videoInfo.likeCount),
-  description: videoInfo.descriptionHtml,
-  videoId: videoInfo.videoId,
-  channelName: videoInfo.author,
-  channelId: videoInfo.authorId,
-  channelThumbnails: videoInfo.authorThumbnails?.find(t => t.width === 176)?.url || null,
-  videoStreamUrl: videoInfo.formatStreams?.[0]?.url || null,
-  duration: formatDuration(videoInfo.lengthSeconds),
-  recommendedVideos: videoInfo.recommendedVideos?.map(v => ({
-    videoId: v.videoId,
-    title: v.title,
-    viewCount: v.viewCount,
-    viewCountText: formatCount(v.viewCount) + '回',
-    publishedText: v.publishedText,
-    author: v.author,
-    authorId: v.authorId,
-    thumbnailUrl: `https://img.youtube.com/vi/${v.videoId}/default.jpg`,
-    duration: formatDuration(v.lengthSeconds)
-  })) || []
-};
-
-// 📦 ログ出力を追加
-console.log('📤 新形式レスポンス:', JSON.stringify(responseJson, null, 2));
-
-return res.json(responseJson);
-
+    return res.json(responseJson);
 
   } catch (error) {
     console.error(`動画取得失敗: ${error.message}`);
