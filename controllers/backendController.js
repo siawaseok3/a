@@ -79,14 +79,14 @@ const handleApiVideoRequest = async (req, res) => {
     const audioUrl = bestAudio?.url || null;
 
 
-    // 高画質ストリームを探す（動画のみ、かつビットレート最大のもの）
-    const videoFormats = adaptiveFormats.filter(f => f.mimeType && f.mimeType.includes('video'));
+    // 高互換性のmp4動画から最も高ビットレートのものを選ぶ
+    const videoFormats = adaptiveFormats.filter(f => f.type?.includes('video/mp4') && f.url);
     let highstreamUrl = null;
     if (videoFormats.length > 0) {
-      // ビットレートで降順ソートして最高画質を取得
       videoFormats.sort((a, b) => (b.bitrate || 0) - (a.bitrate || 0));
-      highstreamUrl = videoFormats[0].url || null;
+      highstreamUrl = videoFormats[0].url;
     }
+
 
     const responseJson = {
       title: videoInfo.title,
