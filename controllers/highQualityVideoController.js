@@ -2,8 +2,9 @@ const axios = require('axios');
 
 async function handleHighQuoRequest(req, res) {
   const videoId = req.params.id;
+  const apiBase = req.protocol + '://' + req.get('host');
   try {
-    const response = await axios.get(`/api/${videoId}?token=wakameoishi`);
+    const response = await axios.get(`${apiBase}/api/${videoId}?token=wakameoishi`);
     const videoData = response.data;
     res.render('highquo', { videoData, videoId });
   } catch (error) {
@@ -16,3 +17,4 @@ async function handleHighQuoRequest(req, res) {
 }
 
 module.exports = { handleHighQuoRequest };
+
