@@ -74,9 +74,10 @@ const handleApiVideoRequest = async (req, res) => {
     // adaptiveFormats から音声ストリームと高画質ストリームを抽出
     const adaptiveFormats = videoInfo.adaptiveFormats || [];
 
-    // 音声ストリームを探す（mimeTypeに"audio"が含まれるもの）
-    const audioFormat = adaptiveFormats.find(f => f.mimeType && f.mimeType.includes('audio'));
-    const audioUrl = audioFormat?.url || null;
+    const audioFormats = adaptiveFormats.filter(f => f.type && f.type.includes('audio/web'));
+    const bestAudio = audioFormats.sort((a, b) => (b.bitrate || 0) - (a.bitrate || 0))[0];
+    const audioUrl = bestAudio?.url || null;
+
 
     // 高画質ストリームを探す（動画のみ、かつビットレート最大のもの）
     const videoFormats = adaptiveFormats.filter(f => f.mimeType && f.mimeType.includes('video'));
