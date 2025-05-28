@@ -20,7 +20,7 @@ async function ggvideo(videoId) {
 
   for (const instance of apis) {
     try {
-      const response = await axios.get(`${instance}/api/v1/videos/${videoId}`, { timeout: MAX_API_WAIT_TIME });
+      const response = await axios.get(`${instance}/api/v1/videos/${videoId}?hl=ja`, { timeout: MAX_API_WAIT_TIME });
       if (response.data?.formatStreams) return response.data;
     } catch (err) {
       console.error(`[失敗] ${instance}: ${err.message}`);
