@@ -246,7 +246,10 @@
           <h2 id="videoTitle" style="font-weight:bold"><%= videoData.title %></h2>
         </div>
         <div class="video-info">
-          <span id="likes views"><%= videoData.viewCountText ? videoData.viewCountText + "視聴" : "null" %><%= videoData.likeCountText ? "・高評価数" + videoData.likeCountText : "null" %></span>
+          <span id="likes views">
+            <%= videoData.viewCountText ? videoData.viewCountText + "視聴" : "null" %>
+            <%= videoData.likeCountText ? "・高評価数" + videoData.likeCountText : "null" %>
+          </span>
           <span id="targetSpan">
             <span class="favorite-btn" onclick="toggleFavorite('<%= videoData.videoId %>', '<%= videoData.channelId %>', '<%= videoData.channelName %>','<%= videoData.videoTitle %>')">お気に入り</span>
             <span id="reloadButton">&#x21bb; 再読み込み</span>
