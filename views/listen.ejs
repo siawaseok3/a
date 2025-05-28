@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>(音のみ)<%= videoTitle %></title>
+  <title>(音のみ)<%= videoData.title %></title>
   <link rel="stylesheet" href="/css/bootstrap.min.css">
   <link rel="stylesheet" href="/css/font.css">
   <link rel="stylesheet" href="/css/plyr.css">
@@ -23,7 +23,7 @@
  </div>
 </header>
   <br>
-  <h1><%= videoData.videoTitle %></h1>
+  <h1><%= videoData.title %></h1>
   <audio controls>
     <source src="<%= videoData.audioUrl %>">
     読み込み失敗😭
