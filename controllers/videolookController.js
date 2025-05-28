@@ -1,6 +1,6 @@
 "use strict";
 
-const { ggvideo } = require('../controllers/backendController.js'); // 適切なパスに変更
+const axios = require('axios');
 
 // Cookie解析関数
 function parseCookies(req) {
@@ -29,7 +29,10 @@ async function handleVideoRequest(req, res) {
   }
 
   try {
-    const videoData = await ggvideo(videoId);
+    // 自身のAPIから動画データを取得
+    const apiBase = req.protocol + '://' + req.get('host');
+    const response = await axios.get(`${apiBase}/api/${videoId}`, { timeout: 5000 });
+    const videoData = response.data;
 
     const recommendedVideos = videoData.recommendedVideos?.filter(v => v?.videoId) || [];
 

@@ -97,9 +97,6 @@ const handleApiVideoRequest = async (req, res) => {
       })) || []
     };
 
-    // 📦 ログ出力を追加
-    console.log('📤 新形式レスポンス:', JSON.stringify(responseJson, null, 2));
-
     return res.json(responseJson);
 
   } catch (error) {
