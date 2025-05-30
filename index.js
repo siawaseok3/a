@@ -874,6 +874,100 @@ app.all("/edu/request",async(req,res)=>{
   }
 });
 
+
+const { Innertube } = require("youtubei.js");
+
+// キャッシュして毎回再生成しないように（オプション）
+let youtubeInstance;
+
+async function getYouTubeInstance() {
+    if (!youtubeInstance) {
+        youtubeInstance = await Innertube.create({
+            config: {
+                hl: "ja", // 日本語
+                gl: "JP", // 日本
+            },
+        });
+    }
+    return youtubeInstance;
+}
+
+function formatJapaneseNumber(text, suffix) {
+    if (!text) return null;
+
+    // 例: "7.18M subscribers" → ["7.18", "M"]
+    const match = text.match(/([\d.,]+)\s*([KMB]?)/i);
+    if (!match) return text + suffix;
+
+    let [, numberStr, unit] = match;
+    let number = parseFloat(numberStr.replace(/,/g, ""));
+
+    switch (unit.toUpperCase()) {
+        case "K":
+            number *= 1000;
+            break;
+        case "M":
+            number *= 1000000;
+            break;
+        case "B":
+            number *= 1000000000;
+            break;
+    }
+
+    if (number >= 100000000) {
+        return `${Math.floor(number / 10000000) / 10}億${suffix}`;
+    } else if (number >= 10000) {
+        return `${Math.floor(number / 1000) / 10}万${suffix}`;
+    } else {
+        return `${Math.floor(number)}${suffix}`;
+    }
+}
+
+// チャンネル情報を取得して JSON で返すルート
+app.get("/acterinfo/:id", async (req, res) => {
+    const channelId = req.params.id;
+
+    if (!channelId) {
+        return res.status(400).json({ error: "チャンネルIDが指定されていません。" });
+    }
+
+    try {
+        const youtube = await getYouTubeInstance();
+        const channel = await youtube.getChannel(channelId);
+
+        if (!channel) {
+            return res.status(404).json({ error: "チャンネルが見つかりませんでした。" });
+        }
+
+        const { metadata, header } = channel;
+
+        const rawSubscribers =
+            header?.content?.metadata?.metadata_rows?.[1]?.metadata_parts?.[0]?.text?.text || null;
+      
+        const atid =
+            header?.content?.metadata?.metadata_rows?.[0]?.metadata_parts?.[0]?.text?.text || null;
+
+        const rawVideos =
+            header?.content?.metadata?.metadata_rows?.[1]?.metadata_parts?.[1]?.text?.text || null;
+
+        const data = {
+            title: metadata.title,
+            description: metadata.description,
+            channelId: metadata.external_id,
+            channelhandle: atid,
+            avatar: metadata.avatar?.[0]?.url || null,
+            subscribers: formatJapaneseNumber(rawSubscribers, "人"),
+            videos: formatJapaneseNumber(rawVideos, "本"),
+            banner: header?.content?.banner?.image?.[0]?.url || null,
+        };
+
+        console.log(`✅ /acterinfo/${channelId} にアクセスされました`);
+        res.json(data);
+    } catch (error) {
+        console.error(`❌ チャンネル情報取得エラー: ${error.message}`);
+        res.status(500).json({ error: "チャンネル情報の取得に失敗しました。", detail: error.message });
+    }
+});
 // エラー
 app.use((req, res) => {
 	res.status(404).render("error.ejs", {
@@ -886,3 +980,4 @@ const listener = app.listen(process.env.PORT || 3000, () => {
 });
 
 process.on("unhandledRejection", console.error);
+
