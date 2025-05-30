@@ -877,15 +877,14 @@ app.all("/edu/request",async(req,res)=>{
 
 const { Innertube } = require("youtubei.js");
 
-// キャッシュして毎回再生成しないように（オプション）
 let youtubeInstance;
 
 async function getYouTubeInstance() {
     if (!youtubeInstance) {
         youtubeInstance = await Innertube.create({
             config: {
-                hl: "ja", // 日本語
-                gl: "JP", // 日本
+                hl: "ja", 
+                gl: "JP", 
             },
         });
     }
