@@ -248,11 +248,13 @@
         </a>
         <div class="rVideoInfo">
           <h5>
-            <a href="/w/<%= video.id %>" style="text-decoration: none;"><%= video.title %></a><br>
+            <a href="/w/<%= video.id %>" style="font-weight: 600; text-decoration: none;"><%= video.title %></a>
           </h5>
+          <div class="channel-name">
           <!-- 
-            <div class="channel-name"><%= video.author.name %></div> 
+            <%= video.author.name %> 
           -->
+          </div>
         </div>
       </div>
     <% }); %>
