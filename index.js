@@ -1,7 +1,7 @@
 "use strict";
 const m3u8stream = require('m3u8stream');
 const ytsr = require("ytsr");
-const ytpl = require("@distube/ytpl"); // ✅ フォーク版を使う
+const ytpl = require("@distube/ytpl");
 const miniget = require("miniget");
 const express = require("express");
 const ejs = require("ejs");
