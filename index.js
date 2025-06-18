@@ -967,6 +967,23 @@ app.get("/acterinfo/:id", async (req, res) => {
         res.status(500).json({ error: "チャンネル情報の取得に失敗しました。", detail: error.message });
     }
 });
+const util = require("./util");
+let client;
+
+
+app.get("/api/wakame/:id", async (req, res) => {
+  if (!util.validateID(req.params.id)) return util.sendInvalidIDError(res);
+
+  try {
+    const comments = await client.getComments(req.params.id);
+    res.json({
+      id: req.params.id,
+      comments
+    });
+  } catch (error) {
+    util.sendError(res, error, "Failed to fetch comments");
+  }
+});
 // エラー
 app.use((req, res) => {
 	res.status(404).render("error.ejs", {
