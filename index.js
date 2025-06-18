@@ -48,19 +48,22 @@ function logError(message, errorDetails) {
 
 app.get('/comment/:id', async (req, res) => {
   const videoId = req.params.id;
-    try {
-        const response = await axios.get(`https://wakamecomment.glitch.me/api/wakame/${videoId}`);
-        const cm = response.data;
+  const apiBase = req.protocol + '://' + req.get('host');  //controllersのcomment.jsにある
 
-        res.render('comment', { cm });
-   } catch (error) {
-        res.status(500).render('error', { 
+  try {
+    const response = await axios.get(`${apiBase}/api/comments/${videoId}`);
+    const cm = response.data;
+
+    res.render('comment', { cm });
+  } catch (error) {
+    res.status(500).render('error', { 
       videoId, 
       error: 'コメントを取得できません', 
       details: error.message 
     });
   }
 });
+
 
 
 
