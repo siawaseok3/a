@@ -6,7 +6,7 @@ const MAX_TIME = 10000;
 
 async function getApis() {
   try {
-    const response = await axios.get('https://wtserver.glitch.me/apis');
+    const response = await axios.get('https://raw.githubusercontent.com/siawaseok3/wakame/refs/heads/master/apis.json');
     apis = response.data;
     console.log('✅ APIリスト取得:', apis.length, '件');
   } catch (error) {
