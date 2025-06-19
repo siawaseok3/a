@@ -234,12 +234,10 @@ const convertYtplToChannel = (playlist, items) => ({
   })),
   totalItems: playlist.items.length,
 });
-
 app.get("/c/:id", async (req, res) => {
   const id = req.params.id;
 
   if (!id || typeof id !== "string" || id.trim() === "") {
-    // バリデーションエラーはログなしでレスポンスだけ返す
     return res.status(400).render("error.ejs", {
       title: "Bad Request",
       content: "プレイリストIDまたはURLが指定されていません。",
@@ -247,7 +245,6 @@ app.get("/c/:id", async (req, res) => {
   }
 
   const page = Number(req.query.p || 1);
-
   if (isNaN(page) || page < 1) {
     return res.status(400).render("error.ejs", {
       title: "Bad Request",
@@ -259,7 +256,11 @@ app.get("/c/:id", async (req, res) => {
   const limit = 500;
 
   try {
-    const playlist = await ytpl(id, { limit });
+    const [playlist, youtube] = await Promise.all([
+      ytpl(id, { limit }),
+      getYouTubeInstance()
+    ]);
+    const channelData = await youtube.getChannel(id);
 
     let cleanTitle = playlist.title;
     const prefix = "Uploads from ";
@@ -278,21 +279,35 @@ app.get("/c/:id", async (req, res) => {
     }
 
     const items = playlist.items.slice(start, end);
-
     const channel = convertYtplToChannel(playlist, items);
     channel.title = cleanTitle;
 
-    res.render("channel.ejs", { channel, page });
+    const { metadata, header } = channelData;
+    const rawSubscribers = header?.content?.metadata?.metadata_rows?.[1]?.metadata_parts?.[0]?.text?.text || null;
+    const rawVideos = header?.content?.metadata?.metadata_rows?.[1]?.metadata_parts?.[1]?.text?.text || null;
+    const atid = header?.content?.metadata?.metadata_rows?.[0]?.metadata_parts?.[0]?.text?.text || null;
+
+    const extraInfo = {
+      title: metadata.title,
+      description: metadata.description,
+      channelId: metadata.external_id,
+      channelhandle: atid,
+      avatar: metadata.avatar?.[0]?.url || null,
+      subscribers: formatJapaneseNumber(rawSubscribers, "人"),
+      videos: formatJapaneseNumber(rawVideos, "本"),
+      banner: header?.content?.banner?.image?.[0]?.url || null,
+    };
+
+    res.render("channel.ejs", { channel, page, extraInfo });
   } catch (error) {
-    // エラー発生時のみログ出力
-    console.error("ytpl error:", error);
+    console.error("チャンネル表示エラー:", error);
     res.status(500).render("error.ejs", {
-      title: "ytpl Error",
-      content:
-        error.message || "プレイリストの取得に失敗しました。時間をおいて再度お試しください。",
+      title: "取得エラー",
+      content: error.message || "情報の取得に失敗しました。時間をおいて再度お試しください。",
     });
   }
 });
+
 
 // サムネ読み込み
 app.get("/vi*", (req, res) => {

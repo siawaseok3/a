@@ -221,23 +221,28 @@
     </div>
   </header>
   
-<div id="acter-banner"></div>
-<div id="acter-info">
-  <img id="acter-avatar" src="" alt="チャンネルアイコン">
-  <div id="acter-meta">
-    <h1 id="acter-name"></h1>
-    <div class="sub-info">
-      <div class="subscribersblock" id="acter-handle"></div>
-      <span class="separator"></span>
-      <div class="subscribers" id="acter-subscribers"></div>
-      <span class="separator">・</span>
-      <div class="videos" id="acter-videos"></div>
-    </div>
-<div class="description-wrapper">
-  <div class="description" id="acter-description"></div>
+<div id="acter-banner" style="background-image: url('<%= extraInfo.banner %>'); background-size: cover; background-position: center;">
 </div>
+<div id="acter-info">
+  <img id="acter-avatar" src="<%= extraInfo.avatar %>" alt="チャンネルアイコン">
+  
+  <div id="acter-meta">
+    <h1 id="acter-name"><%= extraInfo.title %></h1>
+
+    <div class="sub-info">
+      <div class="subscribersblock" id="acter-handle"><%= extraInfo.channelhandle %></div>
+      <span class="separator"></span>
+      <div class="subscribers" id="acter-subscribers">登録者数<%= extraInfo.subscribers %></div>
+      <span class="separator">・</span>
+      <div class="videos" id="acter-videos"><%= extraInfo.videos %>の動画</div>
+    </div>
+
+    <div class="description-wrapper">
+      <div class="description" id="acter-description"><%= extraInfo.description || '' %></div>
+    </div>
   </div>
 </div>
+
 
   <div class="results">
     <% channel.items.forEach(video => { %>
@@ -265,30 +270,6 @@
     <% } %>
     <a class="btn position-absolute" style="right: 0; color: white; background-color: #ff8181;" href="/c/<%= channel.id %>?p=<%= page + 1 %>">次のページ</a>
   </div>
-<script>
-async function loadActerInfo() {
-  const channelId = location.pathname.split("/c/")[1];
-  try {
-    const res = await fetch(`/acterinfo/${channelId}`);
-    if (!res.ok) throw new Error("取得失敗");
 
-    const data = await res.json();
-
-    document.getElementById("acter-banner").style.backgroundImage = `url('${data.banner}')`;
-    document.getElementById("acter-avatar").src = data.avatar;
-    document.getElementById("acter-name").textContent = data.title;
-    document.getElementById("acter-handle").textContent = data.channelhandle;
-    document.getElementById("acter-subscribers").textContent = `登録者数${data.subscribers}`;
-    document.getElementById("acter-videos").textContent = `${data.videos}の動画`;
-    document.getElementById("acter-description").textContent = data.description || "";
-
-  } catch (e) {
-    console.error("チャンネル情報の取得に失敗:", e);
-    document.getElementById("acter-name").textContent = "チャンネル情報の取得に失敗しました";
-  }
-}
-
-window.addEventListener("DOMContentLoaded", loadActerInfo);
-</script>
 </body>
 </html>
