@@ -23,13 +23,13 @@
     "express": "^5.1.0",
     "follow-redirects": "^1.15.9",
     "jsonpath": "^1.1.1",
-    "m3u8stream": "0.8.8",
+    "m3u8stream": "0.8.6",
     "memory-cache": "^0.2.0",
     "miniget": "^4.2.3",
     "soundcloud-downloader": "^1.0.0",
     "ws": "^8.18.2",
     "youtubei.js": "^13.4.0",
-    "ytsr": "3.12.4"
+    "ytsr": "3.8.4"
   },
   "scripts": {
     "start": "node index.js",
